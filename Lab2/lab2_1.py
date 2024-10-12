@@ -1,3 +1,9 @@
+"""
+Zaimplementuj szyfr Hilla i zaszyfruj i odszyfruj wiadomość july z kluczem (w postaci macierzy):
+|11 8|
+|3 7|
+"""
+
 import numpy as np
 
 
