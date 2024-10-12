@@ -1,3 +1,7 @@
+"""
+Zaimplementuj szyfr permutacyjny i odszyfruj wiadomość
+TGEEMNELNNTDROEOAAHDOETCSHAEIRLM, dla danej permutacji.
+"""
 def encrypt(plaintext, permutation):
     n = len(permutation)
     blocks = [plaintext[i:i+n] for i in range(0, len(plaintext), n)]
@@ -36,9 +40,19 @@ encrypted_text = encrypt(plaintext, permutation)
 decrypted_text = decrypt(ciphertext, permutation)
 
 print("Decryption:")
-print(f"Plaintext: {decrypted_text.lower()}")  # Mniejsze litery
+print(f"Plaintext: {decrypted_text.lower()}")
 print(f"Cyphertext: {ciphertext}")
 
 print("\nEncryption:")
 print(f"Cyphertext: {ciphertext}")
-print(f"Plaintext: {encrypted_text.lower()}")  # Mniejsze litery
+print(f"Plaintext: {encrypted_text.lower()}")
+
+"""
+Decryption:
+Plaintext: etngeelmdnonetordaeathcoesrhlami
+Cyphertext: TGEEMNELNNTDROEOAAHDOETCSHAEIRLM
+
+Encryption:
+Cyphertext: TGEEMNELNNTDROEOAAHDOETCSHAEIRLM
+Plaintext: etegenlmdntneoordahatecoesahlrmi
+"""

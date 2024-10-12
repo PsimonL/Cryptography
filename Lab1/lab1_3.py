@@ -1,27 +1,33 @@
+"""
+Zaimplementuj szyfr afiniczny i zaszyfruj i odszyfruj wiadomość attackatonce z kluczem
+a=17, b=20.
+"""
 def encrypt(plaintext, a, b):
     encrypted_text = ""
     for char in plaintext:
-        if char.isalpha(): 
+        if char.isalpha():
             encrypted_char = (a * (ord(char) - ord('a')) + b) % 26 + ord('a')
             encrypted_text += chr(encrypted_char)
         else:
-            encrypted_text += char 
+            encrypted_text += char
     return encrypted_text.upper()
+
 
 def decrypt(ciphertext, a_inv, b):
     ciphertext = ciphertext.lower()
     decrypted_text = ""
     for char in ciphertext:
-        if char.isalpha():  
+        if char.isalpha():
             decrypted_char = (a_inv * ((ord(char) - ord('a')) - b)) % 26 + ord('a')
             decrypted_text += chr(decrypted_char)
         else:
-            decrypted_text += char  
+            decrypted_text += char
     return decrypted_text
+
 
 a = 17
 b = 20
-a_inv = 23  
+a_inv = 23
 
 txt_to_encrypt = "attackatonce"
 
@@ -37,3 +43,15 @@ print("Cyphertext:", encrypted_txt)
 print("\nDecryption")
 print("Plaintext: ", decrypted_txt)
 print("Cyphertext: ", encrypted_txt)
+
+"""
+a=17, a_inv=23
+
+Encryption
+Plaintext:  attackatonce
+Cyphertext: UFFUCIUFYHCK
+
+Decryption
+Plaintext:  attackatonce
+Cyphertext:  UFFUCIUFYHCK
+"""
