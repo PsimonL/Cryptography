@@ -47,14 +47,6 @@ def decrypt_caesar_shift(ciphertext: str, shift: int) -> str:
     return decrypted_text
 
 
-def find_caesar_shift(char_cipher: str, char_plain: str) -> int:
-    """
-    Find the Caesar cipher shift by comparing the most common letter in the
-    ciphertext with the most common letter in the English language.
-    """
-    return (ord(char_cipher) - ord(char_plain)) % 26
-
-
 ciphertext = "BEEAKFYDJXUQYHYJIQRYHTYJIQFBQDUYJIIKFUHCQD"
 english_frequency = "ETAOINSHRDLCUMWFGYPBVKJXQZ"
 
@@ -62,24 +54,24 @@ cipher_frequency = get_letter_frequency(ciphertext)
 
 sorted_cipher_letters = [item[0] for item in cipher_frequency.most_common()]
 
-mapping = {}
-for i in range(len(sorted_cipher_letters)):
-    mapping[sorted_cipher_letters[i]] = english_frequency[i]
+for k in range(0, 10):
+    mapping = {}
+    for i in range(len(sorted_cipher_letters)):
+        mapping[sorted_cipher_letters[i]] = english_frequency[i + k]
 
-decrypted_message = decrypt_with_mapping(ciphertext, mapping)
+    decrypted_message = decrypt_with_mapping(ciphertext, mapping)
 
-print("Ciphertext:", ciphertext)
-print("Letter frequency in ciphertext:", cipher_frequency)
-print("Decryption mapping:", mapping)
-print("Decrypted message using frequency analysis:", decrypted_message.lower())
+    print("Ciphertext:", ciphertext)
+    print("Letter frequency in ciphertext:", cipher_frequency)
+    print("Decryption mapping:", mapping)
+    print("Decrypted message using frequency analysis:", decrypted_message.lower())
 
-most_common_cipher_letter = sorted_cipher_letters[0]
-most_common_english_letter = english_frequency[0]
+    key_letter = 'Y'
+    mapped_letter = mapping[key_letter]
+    ascii_key_letter = ord(key_letter)
+    ascii_mapped_letter = ord(mapped_letter)
+    shift = ascii_key_letter - ascii_mapped_letter
 
-shift = find_caesar_shift(most_common_cipher_letter, most_common_english_letter)
-print(f"\nMost possible Caesar cipher shift (key): {shift}")
-
-print("\nPotential decryptions for all possible shifts:")
-for key in range(26):
-    decrypted_text = decrypt_caesar_shift(ciphertext, key)
-    print(f"Shift {key}: {decrypted_text.lower()}")
+    final_decrypted_message = decrypt_caesar_shift(ciphertext, shift)
+    print(f"Final decrypted message with Caesar cipher (shift {shift}): {final_decrypted_message.lower()}")
+    print("\n")
