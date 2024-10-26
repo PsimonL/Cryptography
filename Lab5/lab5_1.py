@@ -1,117 +1,87 @@
-class SPN:
-    def __init__(self, key, sbox, pbox):
-        self.key = key
-        self.sbox = sbox
-        self.pbox = pbox
-        self.k = self.generate_keys()
-
-    def generate_keys(self):
-        return [
-            0,
-            (self.key & 0xFFFF0000) >> 16,
-            (self.key & 0x0FFFF000) >> 12,
-            (self.key & 0x00FFFF00) >> 8,
-            (self.key & 0x000FFFF0) >> 4,
-            (self.key & 0x0000FFFF),
-        ]
-
-    def encrypt(self, x):
-        print(f"Key: {self.key:032b}\n")
-        print(f"x : {x:016b}\n")
-
-        w = {0: x}
-        print(f"w0: {w[0]:016b}\n")
-
-        N = len(self.k) - 1
-        u = {}
-        v = {}
-
-        for r in range(1, N):
-            print(f"K{r}: {self.k[r]:016b}")
-            u[r] = w[r - 1] ^ self.k[r]
-            print(f"u{r}: {u[r]:016b}")
-
-            v[r] = self.apply_sbox(u[r])
-            print(f"v{r}: {v[r]:016b}")
-
-            w[r] = self.pbox(v[r])
-            print(f"w{r}: {w[r]:016b}\n")
-
-        # Final round
-        u[N - 1] = w[N - 2] ^ self.k[N - 1]
-        v[N - 1] = self.apply_sbox(u[N - 1])
-
-        print(f"K{N}: {self.k[N]:016b}")
-        print(f"u{N}: {u[N - 1]:016b}")
-        print(f"v{N}: {v[N - 1]:016b}\n")
-
-        # Last key addition
-        y = v[N - 1] ^ self.k[N]
-        return y
-
-    def apply_sbox(self, u):
-        v = 0
-        for i in range(4):
-            v |= (self.sbox[(u >> (i * 4)) & 0xF] << (i * 4))
-        return v
-
-
-def pbox(v):
-    w = 0
-    w |= ((v >> 15) & 1) << 15
-    w |= ((v >> 11) & 1) << 14
-    w |= ((v >> 7) & 1) << 13
-    w |= ((v >> 3) & 1) << 12
-    w |= ((v >> 14) & 1) << 11
-    w |= ((v >> 10) & 1) << 10
-    w |= ((v >> 6) & 1) << 9
-    w |= ((v >> 2) & 1) << 8
-    w |= ((v >> 13) & 1) << 7
-    w |= ((v >> 9) & 1) << 6
-    w |= ((v >> 5) & 1) << 5
-    w |= ((v >> 1) & 1) << 4
-    w |= ((v >> 12) & 1) << 3
-    w |= ((v >> 8) & 1) << 2
-    w |= ((v >> 4) & 1) << 1
-    w |= ((v >> 0) & 1) << 0
-    return w
-
-
-def zad1():
-    # 0011 1010 1001 0100 1101 0110 0011 1111
-    key = 0b00111010100101001101011000111111
-
-    # 0010 0110 1011 0111
-    x = 0b0010011010110111
-
-    # Encryption
-    sbox = {
-        0x0: 0xE,
-        0x1: 0x4,
-        0x2: 0xD,
-        0x3: 0x1,
-        0x4: 0x2,
-        0x5: 0xF,
-        0x6: 0xB,
-        0x7: 0x8,
-        0x8: 0x3,
-        0x9: 0xA,
-        0xA: 0x6,
-        0xB: 0xC,
-        0xC: 0x5,
-        0xD: 0x9,
-        0xE: 0x0,
-        0xF: 0x7
-    }
-
-    spn_cipher = SPN(key, sbox, pbox)
-    y = spn_cipher.encrypt(x)
-    print(f"y : {y:016b}\n\n")
+def print_bits(number):
+    num_bits = 4
+    bits = []
+    for i in range(num_bits - 1, -1, -1):
+        bit = (number >> i) & 1
+        bits.append(str(bit))
+    print(" ".join(bits), end=" ")
 
 
 def main():
-    zad1()
+    Key = [0x3, 0xA, 0x9, 0x4, 0xD, 0x6, 0x3, 0xF]
+    x = [2, 6, 11, 7]
+    w = [0x2, 0x6, 0xB, 0x7]
+
+    m = 4
+    u = [0] * m
+    v = [0] * m
+    N = 4
+    PI_S = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]
+    PI_P = [1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16]
+    l = 4
+
+    for r in range(N - 1):
+        print(f"\nK{r + 1}: ", end="")
+        for j in range(l):
+            print_bits(Key[j + r])
+
+        print(f"\nu{r + 1}: ", end="")
+        for j in range(l):
+            u[j] = w[j] ^ Key[j + r]
+            print_bits(u[j])
+
+        print(f"\nv{r + 1}: ", end="")
+        for i in range(m):
+            v[i] = PI_S[u[i]]
+            print_bits(v[i])
+
+        all_bits = [0] * 16
+
+        print(f"\nw{r + 1}: ", end="")
+        for j in range(m):
+            bits = [(v[j] >> i) & 1 for i in range(4)]
+            reversed_bits = bits[::-1]
+
+            for i in range(len(reversed_bits)):
+                all_bits[j * 4 + i] = reversed_bits[i]
+
+        all_bits2 = [0] * 16
+        for j in range(16):
+            all_bits2[j] = all_bits[PI_P[j] - 1]
+
+        for j in range(4):
+            result = 0
+            for i in range(4):
+                result = (result << 1) | all_bits2[j * 4 + i]
+            w[j] = result
+            print_bits(w[j])
+
+        print()
+
+    print(f"\nK{N}: ", end="")
+    for j in range(l):
+        print_bits(Key[j + N - 1])
+
+    print(f"\nu{N}: ", end="")
+    for j in range(l):
+        u[j] = w[j] ^ Key[j + N - 1]
+        print_bits(u[j])
+
+    print(f"\nv{N}: ", end="")
+    for i in range(m):
+        v[i] = PI_S[u[i]]
+        print_bits(v[i])
+
+    print(f"\n\nK{N + 1}: ", end="")
+    for j in range(l):
+        print_bits(Key[j + N])
+
+    print(f"\n\ny: ", end="")
+    y = [0] * 4
+    for j in range(l):
+        y[j] = v[j] ^ Key[j + N]
+        print_bits(y[j])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
