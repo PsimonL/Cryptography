@@ -1,5 +1,8 @@
 
 """
+Na podstawie:
+https://innokrea.pl/kryptografia-losowosc-w-cyberbezpieczenstwie/
+
 Dla kluczy o długości nn bitów, przy jednorodnym (równomiernym) rozkładzie, entropia będzie maksymalna.
 Entropia H(X) liczona jest jako:
 H(X)=−i∑P(xi)log2(P(xi))
