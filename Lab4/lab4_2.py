@@ -1,46 +1,21 @@
 import numpy as np
 
-# Prawdopodobieństwo tekstu jawnego
-prob_P = {'a': 1 / 2, 'b': 1 / 3, 'c': 1 / 6}
-
 def entropy(prob_dist):
-    return -sum(p * np.log2(p) for p in prob_dist.values() if p > 0)
+    """Entropia na podstawie rozkładu prawdopodobieństwa"""
+    return -sum(p * np.log2(p) for p in prob_dist if p > 0)
 
-H_P = entropy(prob_P)
+# Uczciwy
+prob_honest = np.array([1/2, 1/2])
+H_honest = entropy(prob_honest)
 
-# Prawdopodobieństwo klucza
-prob_K = {'K1': 1 / 3, 'K2': 1 / 3, 'K3': 1 / 3}
-H_K = entropy(prob_K)
+# Nieuważny; P(reszka) = 1/4, P(orzeł) = 3/4
+prob_unfair_1 = np.array([3/4, 1/4])
+H_unfair_1 = entropy(prob_unfair_1)
 
-# Macierz szyfrowania i prawdopodobieństwo szyfrogramu
-encryption_matrix = {
-    'K1': {'a': 1, 'b': 2, 'c': 3},
-    'K2': {'a': 2, 'b': 3, 'c': 4},
-    'K3': {'a': 3, 'b': 4, 'c': 1}
-}
+# P(reszka) = 1/100, P(orzeł) = 99/100
+prob_unfair_2 = np.array([99/100, 1/100])
+H_unfair_2 = entropy(prob_unfair_2)
 
-# Prawdopodobieństwo dla każdego szyfrogramu
-prob_C = {1: 0, 2: 0, 3: 0, 4: 0}
-for key, mapping in encryption_matrix.items():
-    for plaintext, cipher in mapping.items():
-        prob_C[cipher] += prob_P[plaintext] * prob_K[key]
-
-H_C = entropy(prob_C)
-
-# H(K|C) = H(K) + H(P) − H(C)
-H_K_given_C = H_K + H_P - H_C
-
-# Wzor entropii warunkowej H(P|C)
-joint_prob_PC = {}
-for key, mapping in encryption_matrix.items():
-    for plaintext, cipher in mapping.items():
-        joint_prob_PC[(plaintext, cipher)] = prob_P[plaintext] * prob_K[key]
-
-H_PC = -sum(p * np.log2(p) for p in joint_prob_PC.values() if p > 0)
-H_P_given_C = H_PC - H_C
-
-print(f"H_P = {H_P}")
-print(f"H_C = {H_C}")
-print(f"H_K = {H_K}")
-print(f"H_K_given_C = {H_K_given_C}")
-print(f"H_P_given_C = {H_P_given_C}")
+print(f"Entropia uczciwego rzutu monetą: {H_honest:.4f} bitów")
+print(f"Entropia dla P(reszka) = 1/4: {H_unfair_1:.4f} bitów")
+print(f"Entropia dla P(reszka) = 1/100: {H_unfair_2:.4f} bitów")

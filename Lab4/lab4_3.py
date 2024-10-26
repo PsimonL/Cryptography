@@ -1,21 +1,22 @@
-import numpy as np
 
-def entropy(prob_dist):
-    """Entropia na podstawie rozkładu prawdopodobieństwa"""
-    return -sum(p * np.log2(p) for p in prob_dist if p > 0)
+"""
+Dla kluczy o długości nn bitów, przy jednorodnym (równomiernym) rozkładzie, entropia będzie maksymalna.
+Entropia H(X) liczona jest jako:
+H(X)=−i∑P(xi)log2(P(xi))
+W przypadku kluczy o nn bitach mamy 2^n możliwych wartości, a przy jednorodnym rozkładzie każde xi ma prawdopodobieństwo:
+P(xi):
+P(xi)=1/2^n
 
-# Uczciwy
-prob_honest = np.array([1/2, 1/2])
-H_honest = entropy(prob_honest)
+Wstawiając to do wzoru na entropię, otrzymujemy:
+H(X)=−∑1/2^n * log2(1/2^n)=−2n * 1/2^n * (−n)=n bitow
+"""
 
-# Nieuważny; P(reszka) = 1/4, P(orzeł) = 3/4
-prob_unfair_1 = np.array([3/4, 1/4])
-H_unfair_1 = entropy(prob_unfair_1)
+def entropy_uniform_keys(n):
+    return n
 
-# P(reszka) = 1/100, P(orzeł) = 99/100
-prob_unfair_2 = np.array([99/100, 1/100])
-H_unfair_2 = entropy(prob_unfair_2)
+entropy_128 = entropy_uniform_keys(128)
+print(f"Entropia 128-bitowego klucza: {entropy_128} bitów")
 
-print(f"Entropia uczciwego rzutu monetą: {H_honest:.4f} bitów")
-print(f"Entropia dla P(reszka) = 1/4: {H_unfair_1:.4f} bitów")
-print(f"Entropia dla P(reszka) = 1/100: {H_unfair_2:.4f} bitów")
+n = 256
+entropy_n = entropy_uniform_keys(n)
+print(f"Entropia {n}-bitowego klucza: {entropy_n} bitów")
