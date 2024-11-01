@@ -1,0 +1,31 @@
+alfa = 1 - beta
+alfa + beta = 1
+pr_k1 = pr_k2 = pr_k3 = alfa / 3
+pr_k4 = pr_k5 = beta/2
+
+pr_1 = pr_k1 * pr_a + pr_k3 * pr_b = pr_k1 * pr_a + pr_k1 * pr_b = pr_k1 (pr_a + pr_b) = pr_k1 = alfa / 3
+pr_a_1 = (pr_a * pr_k1) / pr_1 = (pr_a *  (alfa / 3)) /  (alfa / 3) = pr_a
+pr_b_1 = (pr_b * pr_k1) / pr_1 = (pr_a *  (alfa / 3)) /  (alfa / 3) = pr_b
+
+pr_2 = pr_k2 * pr_a + pr_k1 * pr_b = pr_k2 * pr_a + pr_k2 * pr_b = pr_k2 (pr_a + pr_b) = pr_k2 = alfa / 3
+pr_a_2 = (pr_a * pr_k2) / pr_2 = (pr_a * (alfa / 3)) / (alfa / 3) = pr_a
+pr_b_1 = (pr_b * pr_k2) / pr_2 = (pr_a * (alfa / 3)) / (alfa / 3) = pr_b
+
+pr_3 = pr_k3 * pr_a + pr_k2 * pr_b = pr_k3 * pr_a + pr_k3 * pr_b = pr_k3 (pr_a + pr_b) = pr_k3 = alfa / 3
+pr_a_3 = (pr_a * pr_k3) / pr_3 = (pr_a * (alfa / 3)) / (alfa / 3) = pr_a
+pr_b_1 = (pr_b * pr_k3) / pr_3 = (pr_a * (alfa / 3)) / (alfa / 3) = pr_b
+
+pr_4 = pr_k4 * pr_a + pr_k5 * pr_b = pr_k4 * pr_a + pr_k4 * pr_b = pr_k4 (pr_a + pr_b) = pr_k4 = beta / 2
+pr_a_4 = (pr_a * pr_k4) / pr_4 = (pr_a * (beta / 2)) / (beta / 2) = pr_a
+pr_b_1 = (pr_b * pr_k4) / pr_4 = (pr_a * (beta / 2)) / (beta / 2) = pr_b
+
+pr_5 = pr_k5 * pr_a + pr_k4 * pr_b = pr_k5 * pr_a + pr_k5 * pr_b = pr_k5 (pr_a + pr_b) = pr_k5 = beta / 2
+pr_a_5 = (pr_a * pr_k5) / pr_5 = (pr_a * (beta / 2)) / (beta / 2) = pr_a
+pr_b_1 = (pr_b * pr_k5) / pr_5 = (pr_a * (beta / 2)) / (beta / 2) = pr_b
+
+
+Wniosek:
+Kryptosystem ma doskonałą tajność, jeśli Pr[x|y] = Pr[x] dla każdego
+x ∈ P, y ∈ C. To znaczy, że prawdopodobieństwo a posteriori, że tekstem
+jawnym jest x, pod warunkiem, że mamy do czynienia z szyfrogramem y,
+jest identyczne jak prawdopodobieństwo a priori, że tekstem jawnym jest x.

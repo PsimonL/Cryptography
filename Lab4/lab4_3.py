@@ -1,25 +1,46 @@
+import numpy as np
 
-"""
-Na podstawie:
-https://innokrea.pl/kryptografia-losowosc-w-cyberbezpieczenstwie/
+# Prawdopodobieństwo tekstu jawnego
+prob_P = {'a': 1 / 2, 'b': 1 / 3, 'c': 1 / 6}
 
-Dla kluczy o długości nn bitów, przy jednorodnym (równomiernym) rozkładzie, entropia będzie maksymalna.
-Entropia H(X) liczona jest jako:
-H(X)=−i∑P(xi)log2(P(xi))
-W przypadku kluczy o nn bitach mamy 2^n możliwych wartości, a przy jednorodnym rozkładzie każde xi ma prawdopodobieństwo:
-P(xi):
-P(xi)=1/2^n
+def entropy(prob_dist):
+    return -sum(p * np.log2(p) for p in prob_dist.values() if p > 0)
 
-Wstawiając to do wzoru na entropię, otrzymujemy:
-H(X)=−∑1/2^n * log2(1/2^n)=−2n * 1/2^n * (−n)=n bitow
-"""
+H_P = entropy(prob_P)
 
-def entropy_uniform_keys(n):
-    return n
+# Prawdopodobieństwo klucza
+prob_K = {'K1': 1 / 3, 'K2': 1 / 3, 'K3': 1 / 3}
+H_K = entropy(prob_K)
 
-entropy_128 = entropy_uniform_keys(128)
-print(f"Entropia 128-bitowego klucza: {entropy_128} bitów")
+# Macierz szyfrowania i prawdopodobieństwo szyfrogramu
+encryption_matrix = {
+    'K1': {'a': 1, 'b': 2, 'c': 3},
+    'K2': {'a': 2, 'b': 3, 'c': 4},
+    'K3': {'a': 3, 'b': 4, 'c': 1}
+}
 
-n = 256
-entropy_n = entropy_uniform_keys(n)
-print(f"Entropia {n}-bitowego klucza: {entropy_n} bitów")
+# Prawdopodobieństwo dla każdego szyfrogramu
+prob_C = {1: 0, 2: 0, 3: 0, 4: 0}
+for key, mapping in encryption_matrix.items():
+    for plaintext, cipher in mapping.items():
+        prob_C[cipher] += prob_P[plaintext] * prob_K[key]
+
+H_C = entropy(prob_C)
+
+# H(K|C) = H(K) + H(P) − H(C)
+H_K_C = H_K + H_P - H_C
+
+# Wzor entropii warunkowej H(P|C)
+joint_prob_PC = {}
+for key, mapping in encryption_matrix.items():
+    for plaintext, cipher in mapping.items():
+        joint_prob_PC[(plaintext, cipher)] = prob_P[plaintext] * prob_K[key]
+
+H_PC = -sum(p * np.log2(p) for p in joint_prob_PC.values() if p > 0)
+H_P_C = H_P + H_K - H_C
+
+print(f"H(P) = {H_P}")
+print(f"H(C) = {H_C}")
+print(f"H(K) = {H_K}")
+print(f"H(K|C)= {H_K_C}")
+print(f"H(P|C)= {H_P_C}")

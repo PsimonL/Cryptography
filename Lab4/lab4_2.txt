@@ -1,0 +1,13 @@
+Klucz wybierany jest z jednakowym prawdopodobieństwem 1/312. 
+Oznacza że mamy 312 możliwych kluczy, równie prawdopodobnych.
+Zgodnie z treścią wykładu:
+"""
+Kongruencja ax ≡ b(mod m) ma jedno rozwiązanie x ∈ Zm dla każdego
+b ∈ Zm wtedy i tylko wtedy, gdy NWD(a, m) = 1.
+"""
+Czyli kryptosystem afiniczny jest odwracalny, gdy a jest względnie pierwsze z m.
+
+Doskonała tajność oznacza, że dla dowolnych dwóch plaintextów P1, i P2 oraz dla danego szyfrogramu C, prawdopodobieństwo uzyskania
+C z P1 jest równe prawdopodobieństwu uzyskania C z P2.
+Liczba możliwych szyfrogramów (przy różnorodności kluczy) jest również 312. Zatem dla każdej pary (plaintext, szyfrogram), istnieje równomierne prawdopodobieństwo dla każdego klucza.
+Co oznacza, że C nie daje żadnej informacji o oryginalnym plaintextcie, co oznacza że szyfr jest doskonale tajny.
