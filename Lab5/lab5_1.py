@@ -110,4 +110,6 @@ def spn_algorithm():
 
 
 if __name__ == "__main__":
+    # Encryption
     spn_algorithm()
+    # TODO: Decription
