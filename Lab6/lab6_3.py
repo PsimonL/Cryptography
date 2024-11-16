@@ -1,15 +1,6 @@
 import random
 
 
-def print_bits(number, num_bits=4):
-    bits = [(number >> i) & 1 for i in range(num_bits - 1, -1, -1)]
-    print(" ".join(map(str, bits)), end=" ")
-
-
-def generate_key(key):
-    return [(key >> (i * 4)) & 0xF for i in range(7, -1, -1)]
-
-
 def sbox_lookup(value, S_Box):
     return S_Box[value]
 
@@ -89,7 +80,7 @@ def generate_input_data(num_samples=8000):
             xTmpTab[j] = xTmp
         y[i] = spn_algorithm(Key, xTmpTab)
 
-    return x, y, Key
+    return x, y
 
 
 def linear_attack(x, y, num_samples=8000):
@@ -130,18 +121,19 @@ def linear_attack(x, y, num_samples=8000):
     return max_count, maxL1, maxL2
 
 
-def display_results(maxL1, maxL2):
+def display_results(maxL1, maxL2, max_count):
     tmp = int_to_bit_array(maxL1)
     tmp2 = int_to_bit_array(maxL2)
-    print("Key: xxxx " + "".join(map(str, tmp)) + " xxxx " + "".join(map(str, tmp2)))
+    # print(f"max_count = {max_count}")
+    print("Key: ---- " + "".join(map(str, tmp)) + " ---- " + "".join(map(str, tmp2)))
 
 
-def runner():
-    num_samples = 10000
-    x, y, Key = generate_input_data(num_samples)
+def linear_attack_runner():
+    num_samples = 8000
+    x, y = generate_input_data(num_samples)
     max_count, maxL1, maxL2 = linear_attack(x, y, num_samples)
-    display_results(maxL1, maxL2)
+    display_results(maxL1, maxL2, max_count)
 
 
 if __name__ == "__main__":
-    runner()
+    linear_attack_runner()

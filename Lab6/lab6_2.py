@@ -1,51 +1,59 @@
 import numpy as np
 
-# Definicje macierzy wejściowych X i wyjściowych Y
-x1 = np.array([[0, 0, 0, 0], [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1]])
-x2 = np.array([[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [1, 1, 1, 1]])
-x3 = np.array([[0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1]])
-x4 = np.array([[0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1], [0, 1, 0, 1]])
+sbox = {
+    0x0: 0xE,
+    0x1: 0x4,
+    0x2: 0xD,
+    0x3: 0x1,
+    0x4: 0x2,
+    0x5: 0xF,
+    0x6: 0xB,
+    0x7: 0x8,
+    0x8: 0x3,
+    0x9: 0xA,
+    0xA: 0x6,
+    0xB: 0xC,
+    0xC: 0x5,
+    0xD: 0x9,
+    0xE: 0x0,
+    0xF: 0x7
+}
 
-y1 = np.array([[1, 0, 1, 0], [0, 1, 1, 1], [0, 1, 0, 1], [0, 1, 0, 0]])
-y2 = np.array([[1, 1, 1, 0], [0, 1, 0, 0], [0, 0, 1, 1], [1, 0, 0, 1]])
-y3 = np.array([[1, 0, 0, 0], [1, 1, 1, 0], [1, 1, 1, 0], [0, 0, 0, 1]])
-y4 = np.array([[0, 0, 1, 1], [0, 1, 1, 0], [1, 0, 0, 0], [1, 1, 0, 1]])
+def int_to_bit_array(number, bits=4):
+    return [(number >> i) & 1 for i in range(bits-1, -1, -1)]
 
-# Przechowujemy macierze wejściowe i wyjściowe w listach
-X = [x1, x2, x3, x4]
-Y = [y1, y2, y3, y4]
-
-# Inicjalizacja tabeli NL (Licznik wartości XOR równych 0 dla każdej pary kombinacji A i B)
-NL = np.zeros((16, 16), dtype=int)
-
-# Funkcja konwersji liczby całkowitej na 4-bitową tablicę bitową
-def int_to_bit_array(number):
-    return [(number >> i) & 1 for i in range(3, -1, -1)]
-
-# Obliczanie tabeli NL
-for l in range(16):
-    B = int_to_bit_array(l)
-    for k in range(16):
-        A = int_to_bit_array(k)
-        count = 0
-        for i in range(4):
-            for j in range(4):
-                # Obliczanie wartości XOR dla danej kombinacji A i B
-                x_val = sum(A[m] * X[m][i][j] for m in range(4)) % 2
-                y_val = sum(B[m] * Y[m][i][j] for m in range(4)) % 2
+def linear_approximation_table(sbox):
+    LAT = np.zeros((16, 16), dtype=int)
+    
+    for a in range(16): 
+        A_bits = int_to_bit_array(a)
+        for b in range(16):  
+            B_bits = int_to_bit_array(b)
+            count = 0 
+            
+            for input_val in range(16):  
+                output_val = sbox[input_val]
+                
+                input_bits = int_to_bit_array(input_val)
+                output_bits = int_to_bit_array(output_val)
+                
+                x_val = sum(A_bits[i] * input_bits[i] for i in range(4)) % 2
+                y_val = sum(B_bits[i] * output_bits[i] for i in range(4)) % 2
+                
                 if x_val == y_val:
                     count += 1
-        NL[l][k] = count
+            
+            LAT[a][b] = count
+    
+    return LAT
 
-# Wypisywanie tabeli NL
-print("Tabela NL:")
-for row in NL:
+LAT = linear_approximation_table(sbox)
+
+print("Linear Approximation Table:")
+for row in LAT:
     print(" ".join(f"{val:2d}" for val in row))
 
-# Obliczanie odchylenia Ep (NL - 8) / 16
-Ep = (NL - 8) / 16.0
-
-# Wypisywanie tabeli Ep
-print("\nTabela Ep:")
-for row in Ep:
+SDT = (LAT - 8) / 16.0
+print("\nStandard Deviation Table:")
+for row in SDT:
     print(" ".join(f"{val:+.3f}" for val in row))
