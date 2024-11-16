@@ -1,15 +1,6 @@
 import random
 
 
-def print_bits(number, num_bits=4):
-    bits = [(number >> i) & 1 for i in range(num_bits - 1, -1, -1)]
-    print(" ".join(map(str, bits)), end=" ")
-
-
-def generate_key(key):
-    return [(key >> (i * 4)) & 0xF for i in range(7, -1, -1)]
-
-
 def sbox_lookup(value, S_Box):
     return S_Box[value]
 
