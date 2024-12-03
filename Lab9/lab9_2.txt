@@ -1,0 +1,48 @@
+a)
+(x^4+x^2)*(x^3+x+1) = x^4 * x^3 + x^4 * x + x^4 * 1 + x^2 * x^3 + x^2 * x + x^2 * 1 = 
+= x7 + x^5 + x^4 + x^5 + x^3 + x^2 
+gdzie x^5 = x^2 + 1 w ciele F2
+oraz x^7 = x^2 * x^5 = x^2 * (x*2 + 1) = x^4 + x^2  w ciele F2
+Zatem wracając do równania x7 + x^5 + x^4 + x^5 + x^3 + x^2  = (x^4 + x^2) + (x^2 + 1) + x^4 + (x^2 + 1) + x^3 + x^2
+Następnie uproszczenia w zbiorze Z2:
+= x^4 + x^2 + x^2 + 1 + x^4 + x^2 + 1 + x^3 + x^2 = 0 + x^3 + 0 + 0 + 0 = x^3 
+
+b) Szukany jest wielomian taki, że (x^3 + x^2) * f(x) = 1
+Wpierw należy podzielić iteracyjnie:
+x^5+x^2+1 przez x^3 + x^2, co postepuje tak:
+Wpierw x^5 / x^3 = x^2
+Kolejno x^2 * (x^3 + x^2) = x^5 + x^4
+Finalnie (x^5 + x^2 + 1)-(x^5 + x^4) = x^4 + x^2 + 1 = r1
+
+Wpierw x^4 / x^3 = x
+Kolejno x * (x^3 + x^2) = x^4 + x^3
+Finalnie (x^4 + x^2 +1) - (x^4 + x^3) = x^3 + x^2 + 1 = r2
+
+Wpierw x^3 / x^3 = 1
+Kolejno 1 * (x^3 + x^2) = x^3 + x^2
+Finalnie (x^3 + x^2 +1) - (x^3 + x^2) = 1 = r3
+
+Reszta wynosi 1 => 1 można wyraiż jako kombinację liniową x^3 + x^2 oraz x + 1.
+Ostatecznie za pomocą rozszerzonej części algorytmu Euklidesa możemy znaleźć szukaną odwrotność:
+1 = (x^3 + x^2) - (x^2)(x + 1)
+Podstawienie z wcześniejszego dzielenia:
+1 = [x^2(x^3 + x^2) + (x + 1)] - x^2(x+1) = (x^3 + x^2) * (x^2 + x + 1)
+
+Co oznacza że odwrotność x^3 + x^2 w ciele F2[x]/(x^5 + x^2 + 1) to:
+1 = (x^3 + x^2) * (x^2 + x + 1)
+(x^3 + x^2)^-1 = x^2 + x + 1
+
+
+c) 
+Zaczynając od konwersji 25 dec na bin 25(10)=11001(2) ponieważ 25 = 2^4 + 2^3 + 2^0
+Należy podnosić do kwadratu i mnożyć przez odpowiednie potęgi x, które są reprezentowane przez "1" w zapisie binarnym liczby 25. 
+
+Zaczynając od x^1, podnosimy x^1 aby uzyskać x^2: x*x i tak analogicznie;
+x^4 = (x^2)^2 = x^2 * x^2
+x^8 = (x^4)^2 = x^4 * x^4
+x^16 = (x^8)^2 = x^8 * x^8
+
+Korzystając z reprezentacji binarnej liczby 25:
+x^25 = x^16 * x^8 * x^1
+
+Należy pamiętać o stosowaniu redukcji wyniku modulo x^5 + x^2 + 1 w ciele F2, jeśli w którymkolwiek kroku zostanie otrzymana potęgą wyższa nić 5 - w tym przypadku wszystkie obliczane potęgi, mają stopień mniejszy niż 5.

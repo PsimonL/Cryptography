@@ -1,0 +1,19 @@
+Określ, które z poniższych wielomianów są nieredukowalne w Z2[x]:
+a) x^5+x^4+1
+b) x^5+x^3+1
+c) x^5+x^4+x^2+1
+
+Aby wielomian f(x) stopnia 5 był rozkładalny musiałby, 
+być iloczynem wielomianów o stopniach 1 i 4 oraz 2 i 3, 
+wszystko w pierścieniu w pierścieniu Z2[x]. W Z[x], 
+współczynniki mogą być tylko 0 lub 1, 
+a operacje dodawania i mnożenia odbywają się modulo 2.
+Po wykonaniu każdej operacji wynik jest redukowany do reszty z dzielenia przez 2.
+Więc w wyniku dodawania i odejmowania wartości mogą być tylko 0 albo 1.
+Np:
+XOR x^2, x^2 = 0
+
+a) x^5+x^4+1 = (x^3 + x + 1)(x^2 + x + 1) = x^5 + x^4 + x^3 + x^3 + x^2 + x + x^2 + x + 1 = x^5 + x^4 + 0 + 0 + 0 + 1 = x^5 + x^4 + 1
+c) x^5+x^4+x^2+1 = (x + 1)(x^4 + x + 1) = x^5 + x^2 + x + x^4 + x + 1 = x^5 + x^2 + x^4 + 0 + 1 = x^5 + x^4 + x^2 + 1 
+b) x^5+x^3+1 => nie można stworzyć iloczynu wielomianu przy uwzględnieniu arytmetyki modularnej o stopniu 1 i 4 lub 2 i 3 aby ten wielomian był równy temu iloczynowi
+
