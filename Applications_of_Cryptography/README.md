@@ -243,24 +243,16 @@ Where: $g < p$
 - Bob chooses integer ```b``` (**secret private key of Bob, should not be shared**)
 
 3. Calculating **public keys**
-- Alice calculates public key, based on settled public parameters and her own private key:
+- Alice calculates public key, based on settled public parameters and her own private key: $A = g^a mod (p)$
 
-$A = g^a mod (p)$
-
-- Bob calculates public key, based on settled public parameters and his own private key:
-
-$B = g^b mod (p)$
+- Bob calculates public key, based on settled public parameters and his own private key: $B = g^b mod (p)$
 
 Those keys are going to be **exchanged** during process between Alice and Bob.
 
 4. Calculating **session key** based on **received public key** and already **calculated private key**:
-- Alice calculates:
+- Alice calculates: $K_A = B^a mod (p) => (g^b)^a mod(p) = K$
 
-$K_A = B^a mod (p) => (g^b)^a mod(p) = K$
-
-- Bob calculates:
-
-$K_B = A^b mod (p) => (g^a)^b mod(p) = K$
+- Bob calculates: $K_B = A^b mod (p) => (g^a)^b mod(p) = K$
 
 So $K = K_A = K_B$. Both Alice and Bob have arrived at the same values because under ```mod p```.
 
