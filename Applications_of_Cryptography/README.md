@@ -1,5 +1,6 @@
 # Selected application topics of Cryptography in modern Information and Communication Technology
 
+
 ## Contents
 1. Asymmetric vs Symmetric Ciphers
 2. Hashes and fingerprints
@@ -222,13 +223,46 @@ Examples:
 _Use Case_: Ensuring data has not been changed e.g. blockchain blocks or digital identities.
 
 ## 7. Diffie - Hellman Key Exchange
-Diffie - Hellman Key Exchange algorithm (DH) is part of asymmetric cryptography. But whole point of that algorithm is not to encrypt/decrypt communication or to authenticate someone's digital identity.
+Diffie-Hellman Key Exchange algorithm (DH) is part of asymmetric cryptography. But whole point of that algorithm is not to encrypt/decrypt communication or to authenticate someone's digital identity.
 It's main purpose is to safely exchange key for symmetric methods - session key.
 But from definition of asymmetric algos; every side of connection have its own private and public key.
 
-DH procedure:
-```
-TODO
-```
+### Procedure overview explained on colors
+![image](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.comparitech.com%2Fwp-content%2Fuploads%2F2019%2F03%2Fdiffie-hellman-2.jpg&f=1&nofb=1&ipt=0e7b56d0cf324ce56f3c0659408e215ec2cb921499542287593214db653d1907&ipo=images)
+
+### Mathematical notation:
+1. Setting up public parameters:
+- Alice and Bob publicly agree to use **p and q non-secret** values:
+   + ```p => modulus``` - large prime number
+   + ```g => base``` - primitive root of modulo p
+
+Where: $g < p$
+
+2. Choosing secret **private keys**
+- Alice chooses integer ```a``` (**secret private key of Alice, should not be shared**)
+- Bob chooses integer ```b``` (**secret private key of Bob, should not be shared**)
+
+3. Calculating **public keys**
+- Alice calculates public key, based on settled public parameters and her own private key: $A = g^a mod (p)$
+
+- Bob calculates public key, based on settled public parameters and his own private key: $B = g^b mod (p)$
+
+Those keys are going to be **exchanged** during process between Alice and Bob.
+
+4. Calculating **session key** based on **received public key** and already **calculated private key**:
+- Alice calculates: $K_A = B^a mod (p) => (g^b)^a mod(p) = K$
+
+- Bob calculates: $K_B = A^b mod (p) => (g^a)^b mod(p) = K$
+
+So $K = K_A = K_B$. Both Alice and Bob have arrived at the same values because under ```mod p```.
+
+### Why is it so safe?
+- The security relies on the difficulty of solving the [discrete logarithm problem](http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/discrete_log.pdf): even if an attacker knows ```g```, ```p```, ```A``` and ```B```, they cannot efficiently determine ```a``` or ```b```, and thus cannot reconstruct ```K```.  
+
+
+- [Secrecy state](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange):
+![image](https://i.ytimg.com/vi/SmcFWbdv_Hk/maxresdefault.jpg)
+
+
 https://www.youtube.com/watch?v=NmM9HA2MQGI&ab_channel=Computerphile  
-Worth noticing: in described procedure, session key is never being sent over the network.
+> Worth noticing: in described procedure, session key is never being sent over the network.
