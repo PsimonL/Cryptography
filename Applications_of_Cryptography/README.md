@@ -233,13 +233,10 @@ But from definition of asymmetric algos; every side of connection have its own p
 ### Mathematical notation:
 1. Setting up public parameters:
 - Alice and Bob publicly agree to use **p and q non-secret** values:
-   + p => modulus, large prime number
-   + g => base, primitive root of modulo p
+   + ```p => modulus``` - large prime number
+   + ```g => base``` - primitive root of modulo p
 
-Where:
-$$
-g < p
-$$
+Where: $g < p$
 
 2. Choosing secret **private keys**
 - Alice chooses integer ```a``` (**secret private key of Alice, should not be shared**)
@@ -247,30 +244,33 @@ $$
 
 3. Calculating **public keys**
 - Alice calculates public key, based on settled public parameters and her own private key:
-$$
+
+$
 A = g^a mod (p)
-$$
+$
 
 - Bob calculates public key, based on settled public parameters and his own private key:
-$$
+
+$
 B = g^b mod (p)
-$$
+$
 
 Those keys are going to be **exchanged** during process between Alice and Bob.
 
 4. Calculating **session key** based on **received public key** and already **calculated private key**:
 - Alice calculates:
-$$
+
+$
 K_A = B^a mod (p) => (g^b)^a mod(p) = K
-$$
+$
 
 - Bob calculates:
-$$
+
+$
 K_B = A^b mod (p) => (g^a)^b mod(p) = K
-$$
+$
 
 So $K = K_A = K_B$. Both Alice and Bob have arrived at the same values because under ```mod p```.
-
 
 ### Why is it so safe?
 - The security relies on the difficulty of solving the [discrete logarithm problem](http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/discrete_log.pdf): even if an attacker knows ```g```, ```p```, ```A``` and ```B```, they cannot efficiently determine ```a``` or ```b```, and thus cannot reconstruct ```K```.  
