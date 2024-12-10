@@ -1,13 +1,12 @@
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import hashlib
-from Crypto.Hash import MD4, MD5, SHA1, SHA224, SHA256, SHA384, SHA512
+from Crypto.Hash import MD5, SHA1, SHA224, SHA256, SHA384, SHA512
 
 # pip install pycryptodome
 # pip install cryptography
 
 hash_algorithms = {
-    "MD4": MD4.new,
     "MD5": MD5.new,
     "SHA-1": SHA1.new,
     "SHA-224": SHA224.new,
@@ -22,9 +21,12 @@ def calculate_hashes(sentences):
     for sentence in sentences:
         sentence_results = {}
         for name, func in hash_algorithms.items():
-            h = func()
-            h.update(sentence.encode())
-            sentence_results[name] = h.hexdigest()
+            try:
+                h = func()
+                h.update(sentence.encode())
+                sentence_results[name] = h.hexdigest()
+            except Exception as e:
+                sentence_results[name] = f"Error: {e}"
         results[sentence] = sentence_results
     return results
 
@@ -35,6 +37,7 @@ def print_outputs(results):
         for algo, digest in hashes.items():
             print(f"{algo}: {digest}")
         print()
+
 
 def hash_funcs_runner():
     sentences = [

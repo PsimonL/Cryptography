@@ -1,34 +1,83 @@
-from cryptography.hazmat.primitives.hashes import Hash, HashAlgorithm
-from cryptography.hazmat.backends import default_backend
+from hashlib import md5
 
 
-class MD4(HashAlgorithm):
-    name = "md4"
-    digest_size = 16
-    block_size = 64
+def calculate_md5(data):
+    """Oblicza hash MD5 dla podanych danych."""
+    return md5(data).hexdigest()
 
 
-def calculate_md4(data):
-    digest = Hash(MD4(), backend=default_backend())
-    digest.update(data)
-    return digest.finalize().hex()
+def find_differences(data1, data2):
+    """Porównuje dwie wiadomości i znajduje różnice między nimi."""
+    diff_positions = []
+    for i, (b1, b2) in enumerate(zip(data1, data2)):
+        if b1 != b2:
+            diff_positions.append(i)
+    return diff_positions
 
 
-input = {
-    "m1": b"839c7a4d7a92cb5678a5d5b9eea5a7573c8a74deb366c3dc20a083b69f5d2a3bb3719dc69891e9f95e809fd7e8b23ba6318edd45e51fe39708bf9427e9c3e8b9",
-    "m2": b"839c7a4d7a92cbd678a5d529eea5a7573c8a74deb366c3dc20a083b69f5d2a3bb3719dc69891e9f95e809fd7e8b23ba6318edc45e51fe39708bf9427e9c3e8b9",
-    "m3": b"a6af943ce36f0cf4adcb12bef7f0dc1f526dd914bd3da3cafde14467ab129e640b4c41819915cb43db752155ae4b895fc71b9b0d384d06ef3118bbc643ae6384",
-    "m4": b"a6af943ce36f0c74adcb122ef7f0dc1f526dd914bd3da3cafde14467ab129e640b4c41819915cb43db752155ae4b895fc71b9a0d384d06ef3118bbc643ae6384",
-    "m5": b"76931fac9dab2b36c248b87d6ae33f9a62d7183a5d5789e4b2d6b441e2411dc709e111c7e1e7acb6f8cac0bb2fc4c8bc2ae3baaab9165cc458e199cb89f51b13",
-    "m6": b"76931fac9dab2b36d248b87d6af33f9a62d7183a5d5789e4b2d6b441e2411dc709e111c7e1e7acb6f8cac0bb2fc4c8bc2ae3baaab9265cc458e199cb89f51b13",
-}
+def display_differences(data1, data2):
+    """Wyświetla różnice między dwiema wiadomościami w formie czytelnej."""
+    diff_positions = find_differences(data1, data2)
+    for pos in diff_positions:
+        print(f"Position {pos}: {data1[pos]:02x} != {data2[pos]:02x}")
 
-pairs = [("m1", "m2"), ("m3", "m4"), ("m5", "m6")]
 
-for m1, m2 in pairs:
-    hash1 = calculate_md4(input[m1])
-    hash2 = calculate_md4(input[m2])
-    print(f"{m1} vs {m2}:")
-    print(f"  Hash {m1}: {hash1}")
-    print(f"  Hash {m2}: {hash2}")
-    print(f"  Collision: {'YES' if hash1 == hash2 else 'NO'}\n")
+def bytes_from_hex_string(hex_string):
+    """Konwertuje ciąg hex na bajty."""
+    return bytes.fromhex(hex_string.replace(" ", "").replace("\n", ""))
+
+
+def hash_and_compare_messages(messages):
+    """Oblicza MD5 dla wiadomości i porównuje w parach."""
+    hashes = {}
+    for name, data in messages.items():
+        hashes[name] = calculate_md5(data)
+        print(f"Message {name} hash: {hashes[name]}")
+
+    print("\nComparing pairs:")
+    pairs = [("M1", "M2"), ("M1", "M3"), ("M2", "M3")]
+
+    for m1, m2 in pairs:
+        print(f"Comparing {m1} and {m2}:")
+        if hashes[m1] == hashes[m2]:
+            print(f"  Collision detected between {m1} and {m2}!")
+            display_differences(messages[m1], messages[m2])
+        else:
+            print(f"  No collision.")
+
+
+if __name__ == "__main__":
+    messages = {
+        "M1": bytes_from_hex_string("""
+            d1 31 dd 02 c5 e6 ee c4 69 3d 9a 06 98 af f9 5c
+            2f ca b5 87 12 46 7e ab 40 04 58 3e b8 fb 7f 89
+            55 ad 34 06 09 f4 b3 02 83 e4 88 83 25 71 41 5a
+            08 51 25 e8 f7 cd c9 9f d9 1d bd f2 80 37 3c 5b
+            d8 82 3e 31 56 34 8f 5b ae 6d ac d4 36 c9 19 c6
+            dd 53 e2 b4 87 da 03 fd 02 39 63 06 d2 48 cd a0
+            e9 9f 33 42 0f 57 7e e8 ce 54 b6 70 80 a8 0d 1e
+            c6 98 21 bc b6 a8 83 93 96 f9 65 2b 6f f7 2a 70
+        """),
+        "M2": bytes_from_hex_string("""
+            d1 31 dd 02 c5 e6 ee c4 69 3d 9a 06 98 af f9 5c
+            2f ca b5 07 12 46 7e ab 40 04 58 3e b8 fb 7f 89
+            55 ad 34 06 09 f4 b3 02 83 e4 88 83 25 f1 41 5a
+            08 51 25 e8 f7 cd c9 9f d9 1d bd 72 80 37 3c 5b
+            d8 82 3e 31 56 34 8f 5b ae 6d ac d4 36 c9 19 c6
+            dd 53 e2 34 87 da 03 fd 02 39 63 06 d2 48 cd a0
+            e9 9f 33 42 0f 57 7e e8 ce 54 b6 70 80 28 0d 1e
+            c6 98 21 bc b6 a8 83 93 96 f9 65 ab 6f f7 2a 70
+        """),
+        "M3": bytes_from_hex_string("""
+            d1 31 dd 02 c5 e6 ee c4 69 3d 9a 06 98 af f9 5c
+            2f ca b5 07 12 46 7e ab 40 04 58 3e b8 fb 7f 89
+            55 ad 34 06 09 f4 b3 02 83 e4 88 83 25 f1 41 5a
+            08 51 25 e8 f7 cd c9 9f d9 1d bd 72 80 37 3c 5b
+            d8 82 3e 31 56 34 8f 5b ae 6d ac d4 36 c9 19 c6
+            dd 53 e2 34 87 da 03 fd 02 39 63 06 d2 48 cd a0
+            e9 9f 33 42 0f 57 7e e8 ce 54 b6 70 80 28 0d 1e
+            c6 98 31 bc b6 a8 83 93 96 f9 65 ab 6f f7 2a 70
+        """),
+    }
+
+    hash_and_compare_messages(messages)
