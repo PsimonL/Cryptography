@@ -1,13 +1,14 @@
-from hashlib import md5
+from cryptography.hazmat.primitives.hashes import Hash, MD5
+from cryptography.hazmat.backends import default_backend
 
 
 def calculate_md5(data):
-    """Oblicza hash MD5 dla podanych danych."""
-    return md5(data).hexdigest()
+    digest = Hash(MD5(), backend=default_backend())
+    digest.update(data)
+    return digest.finalize().hex()
 
 
 def find_differences(data1, data2):
-    """Porównuje dwie wiadomości i znajduje różnice między nimi."""
     diff_positions = []
     for i, (b1, b2) in enumerate(zip(data1, data2)):
         if b1 != b2:
@@ -16,19 +17,16 @@ def find_differences(data1, data2):
 
 
 def display_differences(data1, data2):
-    """Wyświetla różnice między dwiema wiadomościami w formie czytelnej."""
     diff_positions = find_differences(data1, data2)
     for pos in diff_positions:
         print(f"Position {pos}: {data1[pos]:02x} != {data2[pos]:02x}")
 
 
 def bytes_from_hex_string(hex_string):
-    """Konwertuje ciąg hex na bajty."""
     return bytes.fromhex(hex_string.replace(" ", "").replace("\n", ""))
 
 
 def hash_and_compare_messages(messages):
-    """Oblicza MD5 dla wiadomości i porównuje w parach."""
     hashes = {}
     for name, data in messages.items():
         hashes[name] = calculate_md5(data)
