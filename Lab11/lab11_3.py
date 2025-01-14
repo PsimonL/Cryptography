@@ -1,45 +1,73 @@
-from Crypto.Hash import HMAC, SHA256, SHA512, SHA3_256, SHA3_512
+import random
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+import matplotlib.pyplot as plt
+import numpy as np
 
 
-def compute_hmac(message, key, hash_function):
-    hmac_obj = HMAC.new(key.encode(), msg=message.encode(), digestmod=hash_function)
-    return hmac_obj.hexdigest()
+def generate_random_512bit_number():
+    return random.getrandbits(512)
 
 
-def validate_hmac(message, key, provided_hmac, hash_function):
-    try:
-        hmac_obj = HMAC.new(key.encode(), msg=message.encode(), digestmod=hash_function)
-        hmac_obj.hexverify(provided_hmac)
-        return True
-    except ValueError:
-        return False
+def flip_random_bit(number, bit_length=512):
+    random_bit = 1 << random.randint(0, bit_length - 1)
+    return number ^ random_bit
 
 
-def print_validation(message, key, provided_hmac, hash_function):
-    is_authentic = validate_hmac(message, key, provided_hmac, hash_function)
-    print(f"The message '{message}' is authentic: {is_authentic}")
+def compute_sha3_512_digest(number):
+    number_bytes = number.to_bytes(64, byteorder="big")
+    digest = hashes.Hash(hashes.SHA3_512(), backend=default_backend())
+    digest.update(number_bytes)
+    return digest.finalize()
 
 
-def print_hmac_results():
-    message = "The quick brown fox jumps over the lazy dog"  # brown
-    key = "key"
+def count_ones_in_xor(hash1, hash2):
+    xor_result = int.from_bytes(hash1, byteorder="big") ^ int.from_bytes(hash2, byteorder="big")
+    return bin(xor_result).count("1")
 
-    hmac_sha256 = compute_hmac(message, key, SHA256)
-    hmac_sha512 = compute_hmac(message, key, SHA512)
-    hmac_sha3_256 = compute_hmac(message, key, SHA3_256)
-    hmac_sha3_512 = compute_hmac(message, key, SHA3_512)
 
-    print(f"HMAC-SHA256: {hmac_sha256}")
-    print(f"HMAC-SHA512: {hmac_sha512}")
-    print(f"HMAC-SHA3-256: {hmac_sha3_256}")
-    print(f"HMAC-SHA3-512: {hmac_sha3_512}")
+def calculate_ksac(iterations=10000):
+    ksac_values = []
 
-    print("\nValidating HMACs:")
-    print_validation(message, key, hmac_sha256, SHA256)
+    for _ in range(iterations):
+        # 1: Generate num A
+        number_a = generate_random_512bit_number()
 
-    tampered_message = "The quick brwon fox jumps over the lazy dog"  # brwon
-    print_validation(tampered_message, key, hmac_sha256, SHA256)
+        # 2: Change random bit -> num B
+        number_b = flip_random_bit(number_a)
+
+        # 3: SHA-3-512 for A and B
+        hash_a = compute_sha3_512_digest(number_a)
+        hash_b = compute_sha3_512_digest(number_b)
+
+        # 4: XOR and summing up '1' bits
+        ones_count = count_ones_in_xor(hash_a, hash_b)
+
+        # 5: Calculate Ksac
+        ksac = ones_count / 512
+        ksac_values.append(ksac)
+
+    return ksac_values
+
+
+def plot_histogram(ksac_values):
+    plt.figure(figsize=(10, 6))
+    plt.hist(ksac_values, bins=53, color='skyblue', edgecolor='black')  # density=True => for normalization and getting probability density as result
+    plt.title("Avalanche Effect Factor Histogram: Ksac")
+    plt.xlabel("Ksac")
+    plt.ylabel("Number of occurrences")  # Probability Density
+    plt.axvline(0.5, color='red', linestyle='dashed', linewidth=1, label="Expected Ksac Averages: Ksac = 0.5")
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
 if __name__ == "__main__":
-    print_hmac_results()
+    iterations = 150000
+    print(f"Number of iterations =  {iterations}")
+    ksac_values = calculate_ksac(iterations)
+
+    mean_ksac = np.mean(ksac_values)
+    print(f"Average Ksac value after {iterations} iterations: {mean_ksac:.4f}")
+
+    plot_histogram(ksac_values)
